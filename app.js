@@ -13,6 +13,8 @@ const {
   SESSION_COOKIE_DOMAIN,
 } = require('./env');
 const sessionStore = require('./sessionStore');
+const handleValidationError = require('./middlewares/handleValidationError');
+const handleFileTypeError = require('./middlewares/handleFileTypeError');
 
 const app = express();
 
@@ -36,6 +38,8 @@ const corsOptions = {
 
 // pre-route middlewares
 app.use(cors(corsOptions));
+app.use('/static', express.static('file-storage/private'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -58,9 +62,8 @@ require('./routes')(app);
 
 // post-route middlewares
 app.set('x-powered-by', false);
-const handleValidationError = require('./middlewares/handleValidationError');
-
 app.use(handleValidationError);
+app.use(handleFileTypeError);
 
 // server setup
 const server = app.listen(SERVER_PORT, () => {

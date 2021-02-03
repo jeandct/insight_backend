@@ -74,3 +74,24 @@ module.exports.findByEmail = async (email) => {
   }
   return false;
 };
+
+module.exports.findOne = async (id) => {
+  const result = await db.query('SELECT * FROM candidate WHERE id = ?', [id]);
+
+  if (result.length) {
+    return result[0];
+  }
+  return false;
+};
+
+module.exports.upload = async (id, file) => {
+  const result = await db.query('UPDATE candidate SET cv = ? WHERE id = ?', [
+    file,
+    id,
+  ]);
+
+  if (result) {
+    return true;
+  }
+  return false;
+};

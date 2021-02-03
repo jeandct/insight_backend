@@ -13,7 +13,15 @@ class ValidationError extends Error {
   }
 }
 
+class FileTypeError extends Error {
+  constructor(errorsByFileType) {
+    super(errorsByFileType);
+    this.errorsByFileType = errorsByFileType;
+  }
+}
+
 module.exports = {
   RecordNotFoundError,
   ValidationError,
+  FileTypeError,
 };

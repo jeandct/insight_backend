@@ -24,7 +24,7 @@ module.exports.login = async (req, res) => {
         id: user.id,
         firstname: user.firstname,
         lastname: user.lastname,
-        role: user.role,
+        cv: user.cv,
       };
       return res.status(200).json(userDetails);
     });
