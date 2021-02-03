@@ -13,7 +13,6 @@ const {
   SESSION_COOKIE_DOMAIN,
 } = require('./env');
 const sessionStore = require('./sessionStore');
-const handleValidationError = require('./middlewares/handleValidationError');
 
 const app = express();
 
@@ -59,6 +58,8 @@ require('./routes')(app);
 
 // post-route middlewares
 app.set('x-powered-by', false);
+const handleValidationError = require('./middlewares/handleValidationError');
+
 app.use(handleValidationError);
 
 // server setup
