@@ -32,3 +32,11 @@ module.exports.login = async (req, res) => {
     res.sendStatus(401);
   }
 };
+
+module.exports.logout = async (req, res) => {
+  req.session.destroy((err) => {
+    res.clearCookie('session_id', { path: '/' });
+    if (err) return res.sendStatus(500);
+    return res.sendStatus(200);
+  });
+};
