@@ -1,7 +1,15 @@
 const Candidate = require('../models/candidates');
+const Company = require('../models/companies');
 
 module.exports.register = async (req, res) => {
-  const user = await Candidate.create(req.body);
+  const { environment } = req.params;
+  let user;
+
+  if (environment === 'candidate') {
+    user = await Candidate.create(req.body);
+  } else if (environment === 'company') {
+    user = await Company.create(req.body);
+  }
 
   if (user) {
     return res.status(201).json(user);
@@ -10,7 +18,13 @@ module.exports.register = async (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-  const user = await Candidate.findByEmail(req.body.email);
+  const { environment } = req.params;
+  let user;
+  if (environment === 'candidate') {
+    user = await Candidate.findByEmail(req.body.email);
+  } else if (environment === 'company') {
+    user = await Company.findByEmail(req.body.email);
+  }
 
   if (
     user &&
