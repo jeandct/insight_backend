@@ -1,5 +1,14 @@
 const Candidate = require('../models/candidates');
 
+module.exports.register = async (req, res) => {
+  const user = await Candidate.create(req.body);
+
+  if (user) {
+    return res.status(201).json(user);
+  }
+  return res.status(400).send('Impossible to create new user');
+};
+
 module.exports.login = async (req, res) => {
   const user = await Candidate.findByEmail(req.body.email);
 
