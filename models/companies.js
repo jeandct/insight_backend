@@ -104,3 +104,17 @@ module.exports.upload = async (id, file) => {
   }
   return false;
 };
+
+module.exports.createOffer = async (attributes, id) => {
+  const { title, location, text } = attributes;
+
+  const offer = await db.query(
+    'INSERT INTO offer (company_id, title, location, text) VALUES(?, ?,?,?)',
+    [id, title, location, text]
+  );
+
+  if (offer) {
+    return { id: offer.insertId, company_id: id, title, location, text };
+  }
+  return false;
+};

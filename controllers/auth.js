@@ -5,9 +5,9 @@ module.exports.register = async (req, res) => {
   const { environment } = req.params;
   let user;
 
-  if (environment === 'candidate') {
+  if (environment === 'candidates') {
     user = await Candidate.create(req.body);
-  } else if (environment === 'company') {
+  } else if (environment === 'companies') {
     user = await Company.create(req.body);
   }
 
@@ -20,9 +20,9 @@ module.exports.register = async (req, res) => {
 module.exports.login = async (req, res) => {
   const { environment } = req.params;
   let user;
-  if (environment === 'candidate') {
+  if (environment === 'candidates') {
     user = await Candidate.findByEmail(req.body.email);
-  } else if (environment === 'company') {
+  } else if (environment === 'companies') {
     user = await Company.findByEmail(req.body.email);
   }
 
