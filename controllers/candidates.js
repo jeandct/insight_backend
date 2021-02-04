@@ -20,7 +20,15 @@ module.exports.getUser = async (req, res) => {
 };
 
 module.exports.getOffers = async (req, res) => {
-  const offers = await candidateModel.getOffers();
+  let offers;
+
+  console.log(req.query);
+
+  if (req.query.title || req.query.location) {
+    offers = await candidateModel.getOffersByQuery(req.query);
+  } else {
+    offers = await candidateModel.getOffers();
+  }
 
   if (offers) {
     return res.json(offers);

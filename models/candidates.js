@@ -2,6 +2,7 @@ const argon2 = require('argon2');
 const db = require('../db');
 const { ValidationError } = require('../error-types');
 const definedAttributesToSqlSet = require('../helpers/definedAttributesToSqlSet');
+const definedAttributesToSqlWhere = require('../helpers/definedAttributesToSqlWhere');
 
 const hashPassword = async (password) => {
   return argon2.hash(password);
@@ -109,6 +110,22 @@ module.exports.getOffers = async () => {
   return null;
 };
 
+module.exports.getOffersByQuery = async (attributes) => {
+  const offers = await db.query(
+    `SELECT offer.*, company.company FROM offer JOIN company ON company.id = offer.company_id WHERE ${definedAttributesToSqlWhere(
+      attributes
+    )}`,
+    { ...attributes }
+  );
+
+  console.log(offers);
+
+  if (offers.length) {
+    return offers;
+  }
+  return null;
+};
+
 const checkOffer = async (id, offer_id) => {
   const check = await db.query(
     'SELECT * FROM offer_has_candidate WHERE candidate_id = ? AND offer_id = ?',
@@ -174,8 +191,5 @@ module.exports.getMeetings = async (id) => {
     [id]
   );
 
-  if (meetings.length) {
-    return meetings;
-  }
-  return null;
+  return meetings;
 };
