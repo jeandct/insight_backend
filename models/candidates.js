@@ -98,7 +98,10 @@ module.exports.upload = async (id, file) => {
 };
 
 module.exports.getOffers = async () => {
-  const offers = await db.query('SELECT * FROM offer', []);
+  const offers = await db.query(
+    'SELECT offer.*, company.company FROM offer JOIN company ON company.id = offer.company_id',
+    []
+  );
 
   if (offers.length) {
     return offers;

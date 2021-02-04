@@ -94,7 +94,10 @@ module.exports.findOne = async (id) => {
 };
 
 module.exports.findOneOffer = async (id) => {
-  const result = await db.query('SELECT * FROM offer WHERE id = ?', [id]);
+  const result = await db.query(
+    'SELECT offer.*, company.company FROM offer JOIN company ON company.id = offer.company_id WHERE offer.id = ?',
+    [id]
+  );
 
   if (result.length) {
     return result[0];

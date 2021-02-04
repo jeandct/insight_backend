@@ -3,6 +3,12 @@ const asynchandler = require('express-async-handler');
 const Companies = require('../controllers/companies');
 const requireCurrentCompany = require('../middlewares/requireCurrentCompany');
 
+router.delete(
+  '/:company_id/offers/:offer_id',
+  requireCurrentCompany,
+  asynchandler(Companies.deleteOffer)
+);
+
 router.get(
   '/:company_id/candidates/:user_id',
   requireCurrentCompany,
@@ -32,12 +38,6 @@ router.put(
   '/:company_id/offers/:offer_id',
   requireCurrentCompany,
   asynchandler(Companies.meetingProposal)
-);
-
-router.delete(
-  '/:company_id/offers/:offer_id',
-  requireCurrentCompany,
-  asynchandler(Companies.deleteOffer)
 );
 
 module.exports = router;
