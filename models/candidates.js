@@ -1,6 +1,7 @@
 const argon2 = require('argon2');
 const db = require('../db');
 const { ValidationError } = require('../error-types');
+const definedAttributesToSqlSet = require('../helpers/definedAttributesToSqlSet');
 
 const hashPassword = async (password) => {
   return argon2.hash(password);
@@ -94,4 +95,84 @@ module.exports.upload = async (id, file) => {
     return true;
   }
   return false;
+};
+
+module.exports.getOffers = async () => {
+  const offers = await db.query('SELECT * FROM offer', []);
+
+  if (offers.length) {
+    return offers;
+  }
+  return null;
+};
+
+const checkOffer = async (id, offer_id) => {
+  const check = await db.query(
+    'SELECT * FROM offer_has_candidate WHERE candidate_id = ? AND offer_id = ?',
+    [id, offer_id]
+  );
+
+  if (check.length) {
+    return false;
+  }
+  return true;
+};
+
+module.exports.applyOffer = async (id, offer_id) => {
+  const candidateCanApply = await checkOffer(id, offer_id);
+  console.log(candidateCanApply);
+
+  if (candidateCanApply) {
+    const result = await db.query(
+      'INSERT INTO offer_has_candidate (offer_id, candidate_id) VALUES(?, ?)',
+      [offer_id, id]
+    );
+
+    if (result) {
+      return {
+        offer_id,
+        candidate_id: id,
+      };
+    }
+  }
+  return false;
+};
+
+module.exports.getApplies = async (id) => {
+  const applies = await db.query(
+    'SELECT * from offer_has_candidate as applies JOIN offer ON applies.offer_id = offer.id WHERE applies.candidate_id = ?',
+    [id]
+  );
+
+  if (applies.length) {
+    return applies;
+  }
+  return false;
+};
+
+module.exports.acceptMeeting = async (attributes, candidate_id, offer_id) => {
+  console.log(attributes, candidate_id, offer_id);
+  const result = await db.query(
+    `UPDATE offer_has_candidate SET ${definedAttributesToSqlSet(
+      attributes
+    )} WHERE offer_has_candidate.offer_id = :offer_id AND offer_has_candidate.candidate_id = :candidate_id`,
+    { ...attributes, offer_id, candidate_id }
+  );
+
+  if (result.affectedRows > 0) {
+    return true;
+  }
+  return false;
+};
+
+module.exports.getMeetings = async (id) => {
+  const meetings = await db.query(
+    'SELECT applies.*, offer.*, company.company FROM offer_has_candidate as applies JOIN offer ON applies.offer_id = offer.id JOIN company ON company.id = offer.company_id WHERE applies.candidate_id = ?',
+    [id]
+  );
+
+  if (meetings.length) {
+    return meetings;
+  }
+  return null;
 };
